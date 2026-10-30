@@ -1,0 +1,16 @@
+{
+  "name": "线性代数与解析几何 · 交互讲义",
+  "short_name": "线代讲义",
+  "description": "基于《线性代数与解析几何》第 1–4 章的交互式定理—题目索引",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f3ec",
+  "theme_color": "#1f5c8b",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
