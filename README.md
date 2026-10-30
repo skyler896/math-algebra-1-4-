@@ -1,3 +1,6 @@
+> 在线版（GitHub Pages）：<https://skyler896.github.io/math-algebra-1-4-/>
+> 仓库：<https://github.com/skyler896/math-algebra-1-4->
+
 # 线性代数与解析几何 · 交互讲义（第 1–4 章）
 
 依据 **代万基、廉庆荣、王颖等编《线性代数与解析几何》**（大连理工大学，2012）制作的可交互
