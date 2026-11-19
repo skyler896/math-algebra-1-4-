@@ -82,6 +82,10 @@
       const chunks = buf.split(/\n{2,}/);
       chunks.forEach(chunk => {
         if (!chunk.trim()) return;
+        if (/^\s*\|/.test(chunk) && /\|\s*:?-{2,}/.test(chunk)) {
+          out += renderTable(chunk);
+          return;
+        }
         out += '<p>' + inlineHtml(chunk) + '</p>';
       });
       buf = '';
@@ -105,6 +109,30 @@
       if (i % 2 === 1) return part;
       return escHtml(part).replace(/\n/g, '<br>');
     }).join('');
+  }
+
+  function renderTable(chunk) {
+    const lines = chunk.trim().split('\n').filter(l => l.trim().startsWith('|'));
+    const rows = lines.map(l => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(s => s.trim()));
+    const body = rows.filter(r => !r.every(c => /^:?-{2,}:?$/.test(c)));
+    if (!body.length) return '';
+    let html = '<div class="md-table-wrap"><table class="md-table">';
+    let inBody = false;
+    body.forEach((r, i) => {
+      if (i === 0) {
+        html += '<thead><tr>';
+        r.forEach(c => { html += '<th>' + escHtml(c) + '</th>'; });
+        html += '</tr></thead>';
+      } else {
+        if (!inBody) { html += '<tbody>'; inBody = true; }
+        html += '<tr>';
+        r.forEach(c => { html += '<td>' + escHtml(c) + '</td>'; });
+        html += '</tr>';
+      }
+    });
+    if (inBody) html += '</tbody>';
+    html += '</table></div>';
+    return html;
   }
 
   function plainText(s) {
@@ -464,7 +492,7 @@
       + '<div class="sc-row"><span>定理 / 定义</span><b>' + STATS.theorems + ' 条</b></div>'
       + '<div class="sc-row"><span>例题 / 习题</span><b>' + STATS.problems + ' 道</b></div>'
       + '<div class="sc-row"><span>双向关联</span><b>' + STATS.edges + ' 条</b></div>'
-      + '<div class="sc-row"><span>覆盖范围</span><b>第 1–4 章</b></div>'
+      + '<div class="sc-row"><span>覆盖范围</span><b>第 1–8 章</b></div>'
       + '</div>';
 
     $('#sidebar-inner').innerHTML = html;
@@ -551,7 +579,7 @@
     let html = '<div class="main-inner">';
     html += '<section class="hero">'
       + '<span class="eyebrow">Linear Algebra &amp; Analytic Geometry</span>'
-      + '<h1>线性代数与解析几何<br>第 1–4 章 · 定理与题目整合</h1>'
+      + '<h1>线性代数与解析几何<br>第 1–8 章 · 定理与题目整合</h1>'
       + '<p>把教材中的定义、定理、例题与习题织成一张双向网：每条定理都能看到“可应对哪些题”，每道题都能回溯“用到哪些定理”。支持章节目录跳转、定理搜索、搜题与专题复习。</p>'
       + '<div class="hero-stats">'
       + heroStat(STATS.theorems, '定理 / 定义')
@@ -566,7 +594,7 @@
       + '</div></section>';
 
     html += '<div class="home-grid"><div>';
-    html += '<div class="section-head"><div><h2>四章脉络</h2><div class="sh-sub">矩阵 → 行列式 → 可逆矩阵与线性方程组 → 空间平面与直线</div></div></div>';
+    html += '<div class="section-head"><div><h2>八章脉络</h2><div class="sh-sub">矩阵 → 行列式 → 可逆矩阵 → 空间几何 → 向量组与秩 → 线性方程组 → 向量空间 → 特征值与对角化</div></div></div>';
     html += '<div class="chapter-grid">';
     DATA.chapters.forEach(ch => {
       const secCount = ch.sections.length;
@@ -777,8 +805,8 @@
     let html = '<div class="main-inner">';
     html += '<div class="page-head"><h1>' + (isThm ? '定理库' : '题库') + '</h1>'
       + '<div class="ph-sub">' + (isThm
-        ? '教材第 1–4 章的全部定义、定理、推论、性质与公式。每条都可查看“可应对的题目”。'
-        : '教材第 1–4 章的全部例题、习题、思考题与提高题。每道题都标注“涉及的定理”。') + '</div></div>';
+        ? '教材第 1–8 章的全部定义、定理、推论、性质与公式。每条都可查看“可应对的题目”。'
+        : '教材第 1–8 章的全部例题、习题、思考题与提高题。每道题都标注“涉及的定理”。') + '</div></div>';
 
     html += '<div class="filterbar">';
     html += '<span class="f-label">章节</span>';
@@ -1122,7 +1150,7 @@
   /* ---------------- 页脚 / 404 ---------------- */
   function footer() {
     const meta = DATA.meta || {};
-    return '<footer class="app-footer"><span>' + escHtml(meta.source || '') + ' · 第 1–4 章</span>'
+    return '<footer class="app-footer"><span>' + escHtml(meta.source || '') + ' · 第 1–8 章</span>'
       + '<span>公式由教材原页转录，细节以<a href="assets/textbook.pdf" target="_blank" rel="noopener">教材原文</a>为准 · 个人学习用途</span></footer>';
   }
   function notFound(msg) {
@@ -1178,7 +1206,7 @@
       if (it) document.title = it.label + ' ' + it.title + ' · 线性代数交互讲义';
       else document.title = '线性代数与解析几何 · 交互讲义';
     } else {
-      document.title = '线性代数与解析几何 · 交互讲义 | 第 1–4 章';
+      document.title = '线性代数与解析几何 · 交互讲义 | 第 1–8 章';
     }
   }
 

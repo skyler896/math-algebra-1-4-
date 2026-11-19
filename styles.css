@@ -622,6 +622,11 @@ a.tag:hover { color: var(--accent); border-color: var(--accent-line); background
 .rich .katex-display { margin: .5em 0 .7em; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
 .rich .katex { font-size: 1.04em; }
 .rich strong { color: var(--ink); }
+.md-table-wrap { margin: .7em 0; overflow-x: auto; }
+.md-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: var(--surface); }
+.md-table th, .md-table td { border: 1px solid var(--line); padding: 5px 9px; text-align: center; vertical-align: middle; }
+.md-table th { background: var(--surface-2); color: var(--ink); font-weight: 600; }
+.md-table tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-2) 45%, transparent); }
 .rich .hl { background: color-mix(in srgb, var(--gold) 25%, transparent); border-radius: 3px; padding: 0 1px; }
 
 .solution-box, .proof-box {

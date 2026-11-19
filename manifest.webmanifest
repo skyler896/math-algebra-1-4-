@@ -1,7 +1,7 @@
 {
   "name": "线性代数与解析几何 · 交互讲义",
   "short_name": "线代讲义",
-  "description": "基于《线性代数与解析几何》第 1–4 章的交互式定理—题目索引",
+  "description": "基于《线性代数与解析几何》第 1–8 章的交互式定理—题目索引",
   "lang": "zh-CN",
   "start_url": "./index.html",
   "scope": "./",
