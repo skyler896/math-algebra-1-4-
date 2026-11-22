@@ -1576,6 +1576,10 @@
 
   /* ---------------- 模态框 ---------------- */
   let zoomWidth = 100;
+  function resetModalScroll() {
+    const s = $('#modal-scroll');
+    if (s) { s.scrollTop = 0; s.scrollLeft = 0; }
+  }
   function openPage(page, title) {
     const modal = $('#modal');
     const p = parseInt(page, 10);
@@ -1587,6 +1591,8 @@
     zoomWidth = 100;
     $('#modal-img').style.width = '100%';
     modal.hidden = false;
+    resetModalScroll();
+    setTimeout(resetModalScroll, 40);
     document.body.classList.add('no-scroll');
   }
   function openImage(src, title) {
@@ -1598,6 +1604,8 @@
     zoomWidth = 100;
     $('#modal-img').style.width = '100%';
     modal.hidden = false;
+    resetModalScroll();
+    setTimeout(resetModalScroll, 40);
     document.body.classList.add('no-scroll');
   }
   function closeModal() {
