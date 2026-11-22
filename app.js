@@ -218,6 +218,12 @@
         }
       }
     });
+    if (isProblem(it) && Array.isArray(it.relatedTheorems)) {
+      it.relatedTheorems.forEach(r => {
+        const t = BY_ID.get(r && r.id);
+        if (t && isTheory(t) && !it._refIds.includes(t.id)) it._refIds.push(t.id);
+      });
+    }
     it._relatedProblems = [];
     it._relatedTheorems = it._refIds.slice();
     it._plain = plainText(it.statement) + ' ' + plainText(it.solution || '') + ' ' + plainText(it.proof || '');
