@@ -496,6 +496,10 @@
       + '<div class="sc-row"><span>双向关联</span><b>' + STATS.edges + ' 条</b></div>'
       + '<div class="sc-row"><span>覆盖范围</span><b>第 1–8 章</b></div>'
       + '</div>';
+    html += '<div class="side-card side-about"><b>关于本页</b>'
+      + '<p>依据代万基、廉庆荣、王颖等《线性代数与解析几何》第 1–8 章整理；定理与题目双向关联，可跳转、可检索。</p>'
+      + '<p><a href="assets/textbook.pdf" target="_blank" rel="noopener">教材原文 PDF</a> · <a href="tablet.html">平板扫码页</a></p>'
+      + '</div>';
 
     $('#sidebar-inner').innerHTML = html;
 
@@ -895,18 +899,31 @@
       + '<a class="act-btn" href="assets/textbook.pdf#page=' + escHtml(it.page) + '" target="_blank" rel="noopener">打开 PDF</a>'
       + '</div></header>';
 
-    html += '<section class="detail-block"><h2>' + (isProblem(it) ? '题目' : '命题') + '</h2>' + renderRich(it.statement) + '</section>';
+    const hasImgs = Array.isArray(it.images) && it.images.length > 0;
+    if (hasImgs) {
+      html += '<section class="detail-block origin-block"><h2>教材原文 <span class="db-count">' + it.images.length + ' 张</span></h2>'
+        + '<figure class="origin-fig">'
+        + it.images.map((im, i) => '<img src="' + escHtml(im.src) + '" data-origin="' + escHtml(im.src) + '" data-title="' + escHtml(it.label + ' · 教材原文 ' + (i + 1)) + '" loading="lazy" alt="' + escHtml(it.label) + ' 教材原文 ' + (i + 1) + '">').join('')
+        + '<figcaption><span>' + escHtml(it.label) + ' · 教材 p.' + (it.page - 10) + '</span><span>点击图片放大</span></figcaption></figure></section>';
+    }
+
+    let blocks = '<section class="detail-block"><h2>' + (isProblem(it) ? '题目' : '命题') + '</h2>' + renderRich(it.statement) + '</section>';
     if (it.solution) {
-      html += '<section class="detail-block proof-block"><h2>解答</h2>' + renderRich(it.solution) + '</section>';
+      blocks += '<section class="detail-block proof-block"><h2>解答</h2>' + renderRich(it.solution) + '</section>';
     }
     if (it.proof) {
-      html += '<section class="detail-block proof-block"><h2>证明</h2>' + renderRich(it.proof) + '</section>';
+      blocks += '<section class="detail-block proof-block"><h2>证明</h2>' + renderRich(it.proof) + '</section>';
     }
     if (it.hint) {
-      html += '<section class="detail-block"><h2>思路提示</h2><div class="hint-box" style="margin-top:0"><b>提示</b>　' + renderRich(it.hint) + '</div></section>';
+      blocks += '<section class="detail-block"><h2>思路提示</h2><div class="hint-box" style="margin-top:0"><b>提示</b>　' + renderRich(it.hint) + '</div></section>';
     }
     if (it.remark) {
-      html += '<section class="detail-block"><h2>注</h2>' + renderRich(it.remark) + '</section>';
+      blocks += '<section class="detail-block"><h2>注</h2>' + renderRich(it.remark) + '</section>';
+    }
+    if (hasImgs) {
+      html += '<details class="text-version"><summary>文字版（可检索 / 可复制公式）</summary><div class="tv-body">' + blocks + '</div></details>';
+    } else {
+      html += blocks;
     }
 
     // 关联
@@ -985,7 +1002,7 @@
 
     // 右栏
     html += '<aside class="detail-rail">';
-    if (it.page) {
+    if (it.page && !hasImgs) {
       const img = 'assets/pages/p' + pad3(it.page) + '.jpg';
       html += '<div class="panel"><a class="rail-page" href="#" data-page="' + escHtml(it.page) + '" data-title="' + escHtml(it.label + ' ' + it.title) + '">'
         + '<img src="' + img + '" alt="教材第 ' + it.page + ' 页" loading="lazy"></a>'
@@ -1560,6 +1577,18 @@
     $('#modal-img').src = 'assets/pages/p' + pad3(p) + '.jpg';
     $('#modal-title').textContent = (title ? title + ' · ' : '') + '教材 p.' + (p - 10) + '（PDF ' + p + '）';
     $('#modal-pdf').href = 'assets/textbook.pdf#page=' + p;
+    $('#modal-pdf').hidden = false;
+    zoomWidth = 100;
+    $('#modal-img').style.width = '100%';
+    modal.hidden = false;
+    document.body.classList.add('no-scroll');
+  }
+  function openImage(src, title) {
+    const modal = $('#modal');
+    if (!src) return;
+    $('#modal-img').src = src;
+    $('#modal-title').textContent = title || '教材原文';
+    $('#modal-pdf').hidden = true;
     zoomWidth = 100;
     $('#modal-img').style.width = '100%';
     modal.hidden = false;
@@ -1610,6 +1639,11 @@
       if (pg) {
         e.preventDefault();
         openPage(pg.getAttribute('data-page'), pg.getAttribute('data-title') || '');
+      }
+      const og = t.closest('[data-origin]');
+      if (og) {
+        e.preventDefault();
+        openImage(og.getAttribute('data-origin'), og.getAttribute('data-title') || '');
       }
 
       if (t.closest('#modal-close') || t.closest('.modal-backdrop')) closeModal();
