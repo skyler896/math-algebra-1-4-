@@ -440,6 +440,7 @@
     theory: '<svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5V3Zm2 2v14h10V7h-2V5H7Zm2 4h6v1.6H9V9Zm0 3.6h6v1.6H9V12Zm0 3.6h4v1.6H9V16Z"/></svg>',
     problem: '<svg viewBox="0 0 24 24"><path d="M4 4h16v3H4V4Zm0 6h10v2H4v-2Zm0 5h16v2H4v-2Zm0 5h10v2H4v-2Z"/></svg>',
     topic: '<svg viewBox="0 0 24 24"><path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"/></svg>',
+    graph: '<svg viewBox="0 0 24 24"><path d="M10 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm10 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM10 17a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm10 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>',
     star: '<svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3Z"/></svg>',
     clock: '<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 2a7 7 0 1 1 0 14 7 7 0 0 1 0-14Zm-1 3v5l4 2 .8-1.6-3.3-1.6V8h-1.5Z"/></svg>'
   };
@@ -456,13 +457,14 @@
     }
 
     let html = '<nav class="side-nav">';
-    html += sideLink('#/', ICON.home, '总览', '', route.path === '/');
-    html += sideLink('#/theorems', ICON.theory, '定理库', STATS.theorems, route.path === '/theorems');
-    html += sideLink('#/problems', ICON.problem, '题库', STATS.problems, route.path === '/problems');
+    html += sideLink('#/', ICON.home, '学习概览', '', route.path === '/');
+    html += sideLink('#/theorems', ICON.theory, '定理索引', STATS.theorems, route.path === '/theorems');
+    html += sideLink('#/problems', ICON.problem, '题目索引', STATS.problems, route.path === '/problems');
+    html += sideLink('#/graph', ICON.graph, '定理—题目图谱', '', route.path === '/graph');
     html += sideLink('#/topics', ICON.topic, '专题复习', STATS.topics, route.path === '/topics');
     html += '</nav>';
 
-    html += '<div class="side-sep">教材目录</div>';
+    html += '<div class="side-sep">章节目录</div>';
     DATA.chapters.forEach(ch => {
       const open = String(ch.num) === String(activeCh) || route.path === '/' && false;
       const secs = ch.sections;
@@ -578,35 +580,37 @@
   function renderHome() {
     let html = '<div class="main-inner">';
     html += '<section class="hero">'
-      + '<span class="eyebrow">Linear Algebra &amp; Analytic Geometry</span>'
-      + '<h1>线性代数与解析几何<br>第 1–8 章 · 定理与题目整合</h1>'
-      + '<p>把教材中的定义、定理、例题与习题织成一张双向网：每条定理都能看到“可应对哪些题”，每道题都能回溯“用到哪些定理”。支持章节目录跳转、定理搜索、搜题与专题复习。</p>'
-      + '<div class="hero-stats">'
-      + heroStat(STATS.theorems, '定理 / 定义')
-      + heroStat(STATS.problems, '例题 / 习题')
-      + heroStat(STATS.edges, '双向关联')
-      + heroStat(STATS.topics, '知识专题')
-      + '</div>'
+      + '<span class="eyebrow">Linear Algebra · Interactive Index</span>'
+      + '<h1>把定理与题目<br>织成一张<em>知识网络</em></h1>'
+      + '<p>以代万基、廉庆荣、王颖等《线性代数与解析几何》第 1–8 章为底本，整理 182 条定义·定理·推论·性质·公式，434 道例题与习题。每条定理可跳到相关题目，每道题可回溯所用定理；支持定理、题目双通道搜索。</p>'
       + '<div class="hero-actions">'
-      + '<a class="btn primary" href="#/section/1.1">从第 1 章开始</a>'
-      + '<a class="btn" href="#/theorems">进入定理库</a>'
-      + '<a class="btn" href="#/problems">进入题库</a>'
+      + '<a class="btn primary" href="#/section/1.1">开始学习 →</a>'
+      + '<a class="btn accent" href="#/graph">打开知识图谱</a>'
+      + '<a class="btn" href="#/theorems">浏览定理索引</a>'
+      + '<span class="hero-note">快捷键：<kbd>/</kbd> 定理 · <kbd>P</kbd> 题目</span>'
       + '</div></section>';
 
+    html += '<div class="stat-grid">'
+      + '<div class="stat"><div class="stat-num">8<small>章</small></div><div class="stat-label">覆盖范围 · 第 1–8 章</div></div>'
+      + '<div class="stat"><div class="stat-num">' + STATS.theorems + '<small>条</small></div><div class="stat-label">定义 · 定理 · 推论 · 性质</div></div>'
+      + '<div class="stat"><div class="stat-num">' + STATS.problems + '<small>道</small></div><div class="stat-label">例题与课后习题</div></div>'
+      + '<div class="stat"><div class="stat-num">' + STATS.edges + '<small>条</small></div><div class="stat-label">定理与题目的双向关联</div></div>'
+      + '</div>';
+
     html += '<div class="home-grid"><div>';
-    html += '<div class="section-head"><div><h2>八章脉络</h2><div class="sh-sub">矩阵 → 行列式 → 可逆矩阵 → 空间几何 → 向量组与秩 → 线性方程组 → 向量空间 → 特征值与对角化</div></div></div>';
+    html += '<div class="section-head"><div><h2>八章内容 <span class="count">CHAPTERS</span></h2><div class="sh-sub">矩阵 → 行列式 → 可逆矩阵 → 空间几何 → 向量组与秩 → 线性方程组 → 向量空间 → 特征值与对角化</div></div><a class="sh-link" href="#/theorems">定理概览 →</a></div>';
     html += '<div class="chapter-grid">';
     DATA.chapters.forEach(ch => {
       const secCount = ch.sections.length;
-      const nItems = ch.sections.reduce((n, s) => n + (s.items || []).length, 0);
       const nThm = ITEMS.filter(it => String(it.chapter) === String(ch.num) && isTheory(it)).length;
       const nProb = ITEMS.filter(it => String(it.chapter) === String(ch.num) && isProblem(it)).length;
       html += '<a class="chapter-card" href="#/chapter/' + ch.num + '">'
-        + '<span class="cc-num">' + ch.num + '</span>'
+        + '<span class="cc-num">' + String(ch.num).padStart(2, '0') + '</span>'
         + '<span class="cc-kicker">CHAPTER ' + ch.num + '</span>'
         + '<h3>' + escHtml(ch.title) + '</h3>'
         + '<div class="cc-sub">' + escHtml(ch.sub || '') + '</div>'
-        + '<div class="cc-meta"><span><b>' + secCount + '</b> 节</span><span><b>' + nThm + '</b> 定理</span><span><b>' + nProb + '</b> 题</span></div>'
+        + '<p class="cc-desc">' + escHtml(ch.intro || '') + '</p>'
+        + '<div class="cc-foot"><span>' + secCount + ' 节 · ' + nThm + ' 定理 · ' + nProb + ' 题</span><span>进入 →</span></div>'
         + '</a>';
     });
     html += '</div>';
@@ -662,7 +666,7 @@
     const nProb = ITEMS.filter(it => String(it.chapter) === String(ch.num) && isProblem(it)).length;
 
     let html = '<div class="main-inner">';
-    html += crumbs([{ text: '总览', href: '#/' }, { text: '第 ' + ch.num + ' 章' }]);
+    html += crumbs([{ text: '概览', href: '#/' }, { text: '第 ' + ch.num + ' 章' }]);
     html += '<section class="chapter-hero"><span class="ch-num-big">' + ch.num + '</span>'
       + '<span class="eyebrow">CHAPTER ' + ch.num + '</span>'
       + '<h1>' + escHtml(ch.title) + '</h1>'
@@ -708,7 +712,7 @@
 
     let html = '<div class="main-inner">';
     html += crumbs([
-      { text: '总览', href: '#/' },
+      { text: '概览', href: '#/' },
       { text: '第 ' + chapter.num + ' 章 ' + chapter.title, href: '#/chapter/' + chapter.num },
       { text: section.num + ' ' + section.title }
     ]);
@@ -791,7 +795,7 @@
       + '</article>';
   }
 
-  /* ---------------- 定理库 / 题库 ---------------- */
+  /* ---------------- 定理索引 / 题目索引 ---------------- */
   function renderLibrary(kind, params) {
     const isThm = kind === 'theorems';
     const ch = params.get('ch') || '';
@@ -803,7 +807,7 @@
     if (tag) list = list.filter(it => (it.tags || []).includes(tag));
 
     let html = '<div class="main-inner">';
-    html += '<div class="page-head"><h1>' + (isThm ? '定理库' : '题库') + '</h1>'
+    html += '<div class="page-head"><h1>' + (isThm ? '定理索引' : '题目索引') + '</h1>'
       + '<div class="ph-sub">' + (isThm
         ? '教材第 1–8 章的全部定义、定理、推论、性质与公式。每条都可查看“可应对的题目”。'
         : '教材第 1–8 章的全部例题、习题、思考题与提高题。每道题都标注“涉及的定理”。') + '</div></div>';
@@ -869,7 +873,7 @@
 
     let html = '<div class="main-inner">';
     html += crumbs([
-      { text: '总览', href: '#/' },
+      { text: '概览', href: '#/' },
       ch ? { text: '第 ' + ch.num + ' 章 ' + ch.title, href: '#/chapter/' + ch.num } : { text: '—' },
       sec ? { text: sec.num + ' ' + sec.title, href: '#/section/' + encodeURIComponent(sec.num) } : { text: '—' },
       { text: it.label }
@@ -1016,6 +1020,243 @@
     return html;
   }
 
+  /* ---------------- 知识图谱 ---------------- */
+  let graphState = null;
+  let graphObserver = null;
+
+  function renderGraphPage() {
+    const buttons = ['<button class="chip on" data-gch="all">全部</button>']
+      .concat(DATA.chapters.map(ch => '<button class="chip" data-gch="' + ch.num + '">第 ' + ch.num + ' 章</button>'))
+      .join('');
+    return '<div class="main-inner graph-page">'
+      + '<div class="graph-head"><div><div class="eyebrow">Theorem — Problem Map</div>'
+      + '<h1>定理—题目图谱</h1>'
+      + '<p>每个点是一个条目：朱红为定理 / 定义，墨绿为题目；连线表示“这道题用到该定理”。可拖拽平移、滚轮缩放、点击节点查看详情。</p></div>'
+      + '<div class="small muted">' + STATS.edges + ' 条关联 · ' + STATS.theorems + ' 条定理 · ' + STATS.problems + ' 道题</div></div>'
+      + '<div class="graph-toolbar"><span class="gt-label">章节</span>' + buttons + '</div>'
+      + '<div class="graph-box"><canvas id="graph-canvas"></canvas>'
+      + '<div class="graph-legend"><span><i style="background:#9b2f24"></i>定理 / 定义</span><span><i style="background:#2f6b4f"></i>题目</span><span><i style="background:#c49a2c"></i>悬停高亮</span></div>'
+      + '<div class="graph-hint">滚轮缩放 · 拖拽平移 · 点击节点</div>'
+      + '<div class="graph-tip" id="graph-tip"></div></div>'
+      + '<p class="small muted" style="margin-top:12px;font-family:var(--sans)">图谱只表达“题目—定理”的直接标注关系，同节但未标注的关联不计入；节点过密时可选择单章查看。</p>'
+      + '</div>';
+  }
+
+  function initGraphPage() {
+    const canvas = document.getElementById('graph-canvas');
+    if (!canvas) return;
+    if (graphObserver) { graphObserver.disconnect(); graphObserver = null; }
+    const ctx = canvas.getContext('2d');
+    const tip = document.getElementById('graph-tip');
+    const state = { chapter: 'all', ox: 0, oy: 0, scale: 1, worldW: 0, worldH: 0, nodes: [], edges: [], hover: null, drag: null };
+    graphState = state;
+    let dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+
+    function build() {
+      const chFilter = state.chapter;
+      const chapters = DATA.chapters.filter(ch => chFilter === 'all' || String(ch.num) === String(chFilter));
+      const byId = new Map();
+      const groups = chapters.map(ch => ({
+        ch,
+        theory: ITEMS.filter(it => String(it.chapter) === String(ch.num) && isTheory(it)),
+        probs: ITEMS.filter(it => String(it.chapter) === String(ch.num) && isProblem(it))
+      }));
+      const single = groups.length === 1;
+      const cols = single ? 1 : Math.min(4, groups.length);
+      const rows = Math.ceil(groups.length / cols);
+      const blockW = single ? 1040 : 340;
+      const blockH = single ? 740 : 360;
+      state.worldW = cols * blockW;
+      state.worldH = rows * blockH;
+      state.nodes = [];
+      state.edges = [];
+      state.blocks = [];
+
+      function grid(list, x0, y0, w, h, radius) {
+        const n = list.length;
+        if (!n) return;
+        const gcols = Math.max(1, Math.ceil(Math.sqrt(n * w / Math.max(1, h))));
+        const grows = Math.ceil(n / gcols);
+        const dx = gcols > 1 ? w / (gcols - 1) : 0;
+        const dy = grows > 1 ? h / (grows - 1) : 0;
+        list.forEach((it, i) => {
+          const r = Math.floor(i / gcols), c = i % gcols;
+          const node = {
+            id: it.id, item: it, theory: isTheory(it),
+            x: x0 + (gcols === 1 ? w / 2 : c * dx),
+            y: y0 + (grows === 1 ? h / 2 : r * dy)
+          };
+          node.r = radius;
+          byId.set(it.id, node);
+          state.nodes.push(node);
+        });
+      }
+
+      groups.forEach((g, gi) => {
+        const bx = (gi % cols) * blockW;
+        const by = Math.floor(gi / cols) * blockH;
+        state.blocks.push({ ch: g.ch, x: bx, y: by, w: blockW, h: blockH });
+        const pad = single ? 70 : 24;
+        grid(g.theory, bx + pad, by + (single ? 70 : 46), blockW - pad * 2, blockH * (single ? .48 : .44), single ? 5 : 3.2);
+        grid(g.probs, bx + pad, by + blockH * (single ? .58 : .56), blockW - pad * 2, blockH * (single ? .34 : .34), single ? 3.6 : 2.4);
+      });
+      state.nodes.forEach(n => {
+        if (n.theory) return;
+        (n.item._refIds || []).forEach(tid => {
+          const t = byId.get(tid);
+          if (t) state.edges.push([n, t]);
+        });
+      });
+    }
+
+    function canvasSize() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      return { w: rect.width, h: rect.height };
+    }
+
+    function fit() {
+      const { w, h } = canvasSize();
+      state.scale = Math.min((w - 36) / state.worldW, (h - 30) / state.worldH, 1.55);
+      state.ox = (w - state.worldW * state.scale) / 2;
+      state.oy = (h - state.worldH * state.scale) / 2;
+      draw();
+    }
+
+    function toWorld(mx, my) { return { x: (mx - state.ox) / state.scale, y: (my - state.oy) / state.scale }; }
+
+    function nodeAt(mx, my) {
+      const p = toWorld(mx, my);
+      let best = null, bestD = 1e9;
+      for (const n of state.nodes) {
+        const d = (n.x - p.x) ** 2 + (n.y - p.y) ** 2;
+        const lim = (n.r + 7 / state.scale) ** 2;
+        if (d < lim && d < bestD) { best = n; bestD = d; }
+      }
+      return best;
+    }
+
+    function draw() {
+      const { w, h } = { w: canvas.width / dpr, h: canvas.height / dpr };
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.translate(state.ox, state.oy);
+      ctx.scale(state.scale, state.scale);
+
+      ctx.lineWidth = 0.65 / state.scale;
+      for (const [p, t] of state.edges) {
+        const active = state.hover && (state.hover === p || state.hover === t);
+        ctx.strokeStyle = active ? 'rgba(155,47,36,.7)' : 'rgba(28,42,51,.13)';
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(t.x, t.y);
+        ctx.stroke();
+      }
+
+      for (const n of state.nodes) {
+        const active = state.hover === n;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, (active ? n.r + 2 : n.r), 0, Math.PI * 2);
+        ctx.fillStyle = n.theory ? '#9b2f24' : '#2f6b4f';
+        ctx.globalAlpha = active ? 1 : .88;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        if (active) {
+          ctx.lineWidth = 1.5 / state.scale;
+          ctx.strokeStyle = '#c49a2c';
+          ctx.stroke();
+        }
+      }
+
+      ctx.fillStyle = '#8a8478';
+      ctx.textAlign = 'center';
+      ctx.font = Math.max(9, 11 / state.scale) + 'px ' + getComputedStyle(document.body).fontFamily;
+      for (const b of state.blocks || []) {
+        ctx.fillText('第 ' + b.ch.num + ' 章', b.x + b.w / 2, b.y + 24);
+      }
+      ctx.restore();
+    }
+
+    function showTip(n, mx, my) {
+      if (!tip) return;
+      if (!n) { tip.style.display = 'none'; return; }
+      tip.textContent = n.item.label + ' · ' + n.item.title;
+      tip.style.display = 'block';
+      const rect = canvas.getBoundingClientRect();
+      tip.style.left = Math.min(rect.width - 220, Math.max(8, mx + 12)) + 'px';
+      tip.style.top = Math.max(8, my - 34) + 'px';
+    }
+
+    canvas.addEventListener('pointerdown', e => {
+      const rect = canvas.getBoundingClientRect();
+      state.drag = { x: e.clientX, y: e.clientY, ox: state.ox, oy: state.oy, moved: 0 };
+      canvas.setPointerCapture(e.pointerId);
+      canvas.style.cursor = 'grabbing';
+    });
+    canvas.addEventListener('pointermove', e => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      if (state.drag) {
+        const dx = e.clientX - state.drag.x, dy = e.clientY - state.drag.y;
+        state.drag.moved = Math.max(state.drag.moved, Math.abs(dx) + Math.abs(dy));
+        state.ox = state.drag.ox + dx;
+        state.oy = state.drag.oy + dy;
+        draw();
+        return;
+      }
+      const n = nodeAt(mx, my);
+      if (n !== state.hover) {
+        state.hover = n;
+        canvas.style.cursor = n ? 'pointer' : 'grab';
+        showTip(n, mx, my);
+        draw();
+      } else if (n) {
+        showTip(n, mx, my);
+      }
+    });
+    canvas.addEventListener('pointerup', e => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      if (state.drag && state.drag.moved < 5) {
+        const n = nodeAt(mx, my);
+        if (n) { location.hash = '#/item/' + encodeURIComponent(n.id); }
+      }
+      state.drag = null;
+      canvas.style.cursor = 'grab';
+    });
+    canvas.addEventListener('pointerleave', () => {
+      if (!state.drag) { state.hover = null; if (tip) tip.style.display = 'none'; draw(); }
+    });
+    canvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      const p = toWorld(mx, my);
+      const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+      state.scale = Math.max(0.28, Math.min(4.5, state.scale * factor));
+      state.ox = mx - p.x * state.scale;
+      state.oy = my - p.y * state.scale;
+      draw();
+    }, { passive: false });
+
+    document.querySelectorAll('[data-gch]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.chapter = btn.getAttribute('data-gch');
+        document.querySelectorAll('[data-gch]').forEach(b => b.classList.toggle('on', b === btn));
+        state.hover = null;
+        build();
+        fit();
+      });
+    });
+
+    build();
+    fit();
+    graphObserver = new ResizeObserver(() => { dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1)); fit(); });
+    graphObserver.observe(canvas.parentElement);
+  }
+
   /* ---------------- 专题 ---------------- */
   function renderTopics() {
     let html = '<div class="main-inner">';
@@ -1039,7 +1280,7 @@
     const thms = t.theory.map(id => BY_ID.get(id)).filter(Boolean);
     const probs = t.problem.map(id => BY_ID.get(id)).filter(Boolean);
     let html = '<div class="main-inner">';
-    html += crumbs([{ text: '总览', href: '#/' }, { text: '专题', href: '#/topics' }, { text: tag }]);
+    html += crumbs([{ text: '概览', href: '#/' }, { text: '专题', href: '#/topics' }, { text: tag }]);
     html += '<div class="page-head"><h1>' + escHtml(tag) + '</h1><div class="ph-sub">共 ' + thms.length + ' 条定理、' + probs.length + ' 道题目。先看定理，再用题目检验。</div></div>';
     if (thms.length) {
       html += '<div class="group-head"><b>相关定理与定义</b><span>' + thms.length + ' 条</span></div><div class="item-list">';
@@ -1066,7 +1307,7 @@
     const viewRes = scope === 'theorem' ? thmRes : scope === 'problem' ? probRes : allRes;
 
     let html = '<div class="main-inner">';
-    html += '<div class="search-head"><div class="crumbs"><a href="#/">总览</a><span class="sep-dot">/</span><span>搜索</span></div>'
+    html += '<div class="search-head"><div class="crumbs"><a href="#/">概览</a><span class="sep-dot">/</span><span>搜索</span></div>'
       + '<h1>' + (q ? '“<em>' + escHtml(q) + '</em>” 的搜索结果' : '搜索') + '</h1>'
       + '<div class="search-tabs">'
       + searchTab('全部', 'all', allRes.length, q, scope)
@@ -1155,7 +1396,7 @@
   }
   function notFound(msg) {
     return '<div class="main-inner"><div class="page-head"><h1>' + escHtml(msg) + '</h1>'
-      + '<div class="ph-sub">页面可能已移动。回到<a href="#/">总览</a>，或从左侧目录重新进入。</div></div></div>';
+      + '<div class="ph-sub">页面可能已移动。回到<a href="#/">概览</a>，或从左侧目录重新进入。</div></div></div>';
   }
 
   /* ---------------- 页面渲染总控 ---------------- */
@@ -1174,6 +1415,7 @@
       else { html = r.html; pendingFocus = r.focus; }
     }
     else if (path === '/theorems' || path === '/problems') html = renderLibrary(path.slice(1), params);
+    else if (path === '/graph') html = renderGraphPage();
     else if (path.startsWith('/item/')) html = renderItem(decodeURIComponent(path.split('/')[2] || ''));
     else if (path === '/topics') html = renderTopics();
     else if (path.startsWith('/topic/')) html = renderTopic(decodeURIComponent(path.split('/')[2] || ''));
@@ -1189,6 +1431,9 @@
     $('#drawer-mask').hidden = true;
 
     // 焦点定位
+    if (path === '/graph') {
+      setTimeout(initGraphPage, 30);
+    }
     if (pendingFocus) {
       const secNum = decodeURIComponent(path.split('/')[2] || '');
       const target = document.getElementById('sub-' + pendingFocus) ||
